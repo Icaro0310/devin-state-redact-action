@@ -1,0 +1,60 @@
+name: devin-redact gate
+description: >-
+  Scan the checked-out workspace with devin-redact and fail the job on a
+  BLOCKED verdict (secrets found). Read-only by design — the action only
+  scans; it never modifies files. Part of the devin-* ecosystem.
+author: Icaro0310
+branding:
+  icon: shield
+  color: purple
+inputs:
+  paths:
+    description: >-
+      Space-separated files or directories to gate, relative to the
+      workspace. Defaults to the whole checked-out repo.
+    required: false
+    default: "."
+  version:
+    description: pip specifier for the devin-redact package
+    required: false
+    default: "devin-redact>=0.2,<0.3"
+  fail-on-review:
+    description: >-
+      Also fail when the verdict is REVIEW instead of only on BLOCKED.
+    required: false
+    default: "false"
+outputs:
+  verdict:
+    description: The gate verdict — CLEAN, REVIEW or BLOCKED
+    value: ${{ steps.gate.outputs.verdict }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      with:
+        python-version: "3.12"
+    - name: Install devin-redact
+      shell: bash
+      run: pip install "${{ inputs.version }}"
+    - name: Gate workspace
+      id: gate
+      shell: bash
+      run: |
+        set +e
+        verdict=$(devin-redact gate ${{ inputs.paths }})
+        rc=$?
+        set -e
+        echo "verdict=$verdict" >> "$GITHUB_OUTPUT"
+        echo "::notice::devin-redact verdict: ${verdict:-<no output>}"
+        if [ "$rc" -eq 2 ]; then
+          echo "::error::devin-redact could not complete the scan"
+          exit 2
+        fi
+        if [ "$verdict" = "BLOCKED" ]; then
+          echo "::error::devin-redact gate: BLOCKED — remove the flagged content before merging"
+          exit 1
+        fi
+        if [ "${{ inputs.fail-on-review }}" = "true" ] && [ "$verdict" = "REVIEW" ]; then
+          echo "::error::devin-redact gate: REVIEW and fail-on-review is enabled"
+          exit 1
+        fi
