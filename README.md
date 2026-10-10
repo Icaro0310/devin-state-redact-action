@@ -3,7 +3,7 @@
 GitHub Action that gates a checked-out repo with
 [`devin-redact`](https://pypi.org/project/devin-redact/) — the
 secret-scanning package from the
-[devin-state](https://github.com/Icaro0310/devin-control) family of the
+[devin-state](https://github.com/Icaro0310/devin-state) family of the
 devin-* ecosystem.
 
 It runs `devin-redact gate` on the workspace and fails the job when the
@@ -41,5 +41,5 @@ The gate verdict is also exposed as the `verdict` output.
 
 - Part of the devin-* ecosystem; this repository is only the Action
   distribution vehicle — all scanning logic lives in the
-  [`devin-redact`](https://github.com/Icaro0310/devin-control/tree/main/packages/redact)
+  [`devin-redact`](https://github.com/Icaro0310/devin-state/tree/main/packages/redact)
   package.
