@@ -37,6 +37,13 @@ With options:
 
 The gate verdict is also exposed as the `verdict` output.
 
+## Platform support
+
+Runs on any GitHub-hosted runner (`ubuntu-latest`, `windows-latest`,
+`macos-latest`) and on self-hosted runners with bash. Python 3.12 is
+provisioned by `actions/setup-python`, and `devin-redact` itself is
+cross-platform — see the package repo for its own matrix.
+
 ## Notes
 
 - Part of the devin-* ecosystem; this repository is only the Action
