@@ -1,8 +1,7 @@
 name: devin-redact gate
 description: >-
-  Scan the checked-out workspace with devin-redact and fail the job on a
-  BLOCKED verdict (secrets found). Read-only by design — the action only
-  scans; it never modifies files. Part of the devin-* ecosystem.
+  Scan the workspace with devin-redact and fail on a BLOCKED verdict
+  (secrets found). Read-only; never modifies files.
 author: Icaro0310
 branding:
   icon: shield
